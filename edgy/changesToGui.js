@@ -70,7 +70,28 @@ function getStageHTML(ide, codePre, codePost) {
 IDE_Morph.prototype.exportToHTML = function () {
     saveAs(new Blob([getStageHTML(this)], {type: 'text/html'}),
            (this.projectName || 'project') + '.html');
-}
+};
+
+IDE_Morph.prototype.projectMenu = (function(oldProjectMenu) {
+    return function(){
+        var self = this;
+        var oldPopup = MenuMorph.prototype.popup;
+        MenuMorph.prototype.popup = function(world, pos){
+            this.addLine();
+            this.addItem(
+                'Export to Python...',
+                function () {self.exportToPython(); }
+            );
+            oldPopup.call(this, world, pos);
+        };
+        oldProjectMenu.call(this);
+        MenuMorph.prototype.popup = oldPopup;
+    };
+})(IDE_Morph.prototype.projectMenu);
+
+IDE_Morph.prototype.exportToPython = function() {
+
+};
 
 function getAllScripts() {
     var filenames = [];
